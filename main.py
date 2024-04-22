@@ -1,13 +1,27 @@
 import telebot
 bot = telebot.TeleBot("6565221179:AAFBJrOeJBV9rjP_NGarCKNtXqR-yp0_EU4")
+#bot = telebot.TeleBot("7107331036:AAF0-AgnOPA5_UTEprnfQ3YznRFau15sLdE")
 from telebot import types
 import textes
 import time
 
-VERSION = "0.1 Alpha"
+VERSION = "0.2 Alpha"
+
+txt = open("users.txt")
+contenttext = txt.read()
+txt.close()
 
 @bot.message_handler(commands=["start"])
 def start(message):
+    with open("users.txt", "a") as k:
+        with open("users.txt") as s:
+            contenttxt = s.read()
+            finding = contenttxt.find(str(message.from_user.id))
+            if int(finding) == -1:
+                print(message.chat.id, file=k)
+                print(f"appended!")
+    s.close()
+    k.close()
     markup = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton("Силы с определениями", callback_data="listOfPowers")
     btn2 = types.InlineKeyboardButton("Формулы сил", callback_data="listOfFormuls")
@@ -31,6 +45,8 @@ def massa(message):
 
 
 
+
+
 @bot.callback_query_handler(func=lambda callback: True)
 def callback_message(callback):
     if callback.data == "listOfPowers":
@@ -43,9 +59,29 @@ def callback_message(callback):
         bot.send_message(callback.message.chat.id, 'Калькулятор пока не доступен, как говорится "Coming soon..."')
     elif callback.data == "development":
         bot.send_message(callback.message.chat.id, f"Развиваю бот в одиночку, по мере сил и возможностей. Версия на данный момент: {VERSION} \n Предложить идею: @smurfobara")
-        bot.send_message(callback.message.chat.id, f"Список изменений на версию {VERSION}: \n Создание, проектирование и воссоздание начальных функций бота")
+        bot.send_message(callback.message.chat.id, f"Список изменений на версию {VERSION}: \n Технические изменения, доработка и оптимизация кода.")
 
+@bot.message_handler(commands=["botclosing"])
+def closing(message):
+    global contenttext
+    if message.from_user.id == 5893427261:
+        with open("users.txt", "r") as l:
+            contenttext = l.read()
+            listoftext = contenttext.split()
+        for listitem in listoftext:
+            bot.send_message(listitem, "Бот будет временно недоуступен по техническим причинам. Для связи: @smurfobara")
+        l.close()
 
+@bot.message_handler(commands=["botopening"])
+def closing(message):
+    global contenttext
+    if message.from_user.id == 5893427261:
+        with open("users.txt", "r") as l:
+            contenttext = l.read()
+            listoftext = contenttext.split()
+        for listitem in listoftext:
+            bot.send_message(listitem, "Бот снова работает✅")
+        l.close()
 
 
 
