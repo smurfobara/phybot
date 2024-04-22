@@ -5,7 +5,7 @@ from telebot import types
 import textes
 import time
 
-VERSION = "0.2 Alpha"
+VERSION = "0.2.1 Alpha"
 
 txt = open("users.txt")
 contenttext = txt.read()
@@ -69,7 +69,7 @@ def closing(message):
             contenttext = l.read()
             listoftext = contenttext.split()
         for listitem in listoftext:
-            bot.send_message(listitem, "Бот будет временно недоуступен по техническим причинам. Для связи: @smurfobara")
+            bot.send_message(listitem, "Бот будет временно недоступен по техническим причинам. Для связи: @smurfobara")
         l.close()
 
 @bot.message_handler(commands=["botopening"])
@@ -83,6 +83,11 @@ def closing(message):
             bot.send_message(listitem, "Бот снова работает✅")
         l.close()
 
-
+@bot.message_handler(commands=["sendtxt"])
+def sendtxt(message):
+    if message.from_user.id == 5893427261:
+        file = open("users.txt", "rb")
+        bot.send_document(message.chat.id, file)
+        file.close()
 
 bot.polling(none_stop=True)
