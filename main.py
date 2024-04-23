@@ -5,7 +5,7 @@ from telebot import types
 import textes
 import time
 
-VERSION = "0.2.1 Alpha"
+VERSION = "0.2.2 Alpha"
 
 txt = open("users.txt")
 contenttext = txt.read()
@@ -89,5 +89,22 @@ def sendtxt(message):
         file = open("users.txt", "rb")
         bot.send_document(message.chat.id, file)
         file.close()
+
+@bot.message_handler(commands=["sendmsgusers"])
+def sendmessage(message):
+    if message.from_user.id == 5893427261:
+        text = message.text
+        listtext = text.split()
+        with open("users.txt", "r") as l:
+            contenttext = l.read()
+            listoftext = contenttext.split()
+        del listtext[0]
+        stringline = " ".join(listtext)
+        for listitem in listoftext:
+            print(listitem)
+            print(listoftext)
+            bot.send_message(listitem, stringline)
+        l.close()
+        bot.send_message(5893427261, "Рассылка завершена")
 
 bot.polling(none_stop=True)
