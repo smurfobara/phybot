@@ -5,12 +5,17 @@ from telebot import types
 import textes
 from datetime import datetime
 import time
+import logging
 
-VERSION = "0.5.1 Beta"
+logging.basicConfig(level=logging.INFO, filename="phyBot.log",filemode="w",format="%(asctime)s %(levelname)s %(message)s")
+
+logging.info("started to load")
+VERSION = "0.5.2 Beta"
+
+
 now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 listMessages = []
-
 txt = open("users.txt")
 contenttext = txt.read()
 txt.close()
@@ -19,13 +24,13 @@ txt.close()
 def start(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} User {message.from_user.username} {message.from_user.is_premium} used /start")
+    logging.info(f"User {message.from_user.username} {message.from_user.is_premium} used /start")
     with open("users.txt", "a") as k:
         with open("users.txt") as s:
             contenttxt = s.read()
             finding = contenttxt.find(str(message.from_user.id))
             if int(finding) == -1:
                 print(message.chat.id, file=k)
-                print(f"appended!")
     s.close()
     k.close()
     markup = types.InlineKeyboardMarkup()
@@ -56,6 +61,7 @@ def massa(message):
 def finding(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} User {message.from_user.username} {message.from_user.is_premium} used /find")
+    logging.info(f"User {message.from_user.username} {message.from_user.is_premium} used /find")
     text = str(message.text)
     text = text.lower()
     lines = text.split()
@@ -67,12 +73,10 @@ def finding(message):
         bot.send_message(message.chat.id, "⚠️ Укажите текст который пытаетесь найти /find [текст]")
     else:
         for word in lines:
-            print("word in lines")
             for line in listPowers:
-                print("line in textes")
                 if word in line:
-                    print("word in line")
                     bot.send_message(message.chat.id, line)
+                    print("finded!")
                     isfinded = True
                     print (isfinded)
                     break
@@ -80,6 +84,7 @@ def finding(message):
             for line in listOprs:
                 if word in line:
                     bot.send_message(message.chat.id, line)
+                    print("finded!")
                     break
         
 
@@ -91,6 +96,7 @@ def callback_message(callback):
     if callback.data == "listOfPowers":
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{now} User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE listpowers")
+        logging.info(f"User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE listpowers")
         bot.send_message(callback.message.chat.id, "Список сил (пока не полный)👇👇👇")
         for index in listPowers:
             bot.send_message(callback.message.chat.id, index)
@@ -98,19 +104,23 @@ def callback_message(callback):
     elif callback.data == "find":
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{now} User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE find")
+        logging.info(f"User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE find")
         bot.send_message(callback.message.chat.id, "Новая функция: поиск! Пока может работать не очень стабильно, но в будущем все исправится! \n Для использования введите /find и текст, который пытаетесь найти.")
     elif callback.data == "calculator":
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{now} User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE calculator")
+        logging.info(f"User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE calculator")
         bot.send_message(callback.message.chat.id, 'Калькулятор пока не доступен, как говорится "Coming soon..."')
     elif callback.data == "development":
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{now} User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE development")
+        logging.info(f"User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE development")
         bot.send_message(callback.message.chat.id, f"Развиваю бот в одиночку, по мере сил и возможностей. Версия на данный момент: {VERSION} \n Предложить идею: @smurfobara")
         bot.send_message(callback.message.chat.id, f"Список изменений на версию {VERSION}: \n Техническое обновление \n Доработка и оптимизация кода")
     elif callback.data == "listOfOprs":
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f"{now} User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE listoprs")
+        logging.info(f"User {callback.message.from_user.username} {callback.message.from_user.is_premium} taped INLINE listoprs")
         bot.send_message(callback.message.chat.id, "Список определений (пока не полный)👇👇👇")
         for index in listOprs:
             bot.send_message(callback.message.chat.id, index)
@@ -123,6 +133,7 @@ def callback_message(callback):
 def closing(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} WARNING! User {message.from_user.username} {message.from_user.is_premium} used /botclosing")
+    logging.warning(f"WARNING! User {message.from_user.username} {message.from_user.is_premium} used /botclosing")
     global contenttext
     if message.from_user.id == 5893427261:
         with open("users.txt", "r") as l:
@@ -134,11 +145,15 @@ def closing(message):
         else:
             print("ALL MESSAGES SENDED")
         l.close()
+        logs = open("phyBot.log", "rb")
+        bot.send_document(message.chat.id, logs)
+        logs.close()
 
 @bot.message_handler(commands=["botopening"])
 def closing(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} WARNING! User {message.from_user.username} {message.from_user.is_premium} used /botopening")
+    logging.warning(f"WARNING! User {message.from_user.username} {message.from_user.is_premium} used /botopening")
     global contenttext
     if message.from_user.id == 5893427261:
         with open("users.txt", "r") as l:
@@ -152,6 +167,7 @@ def closing(message):
 def sendtxt(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendtxt")
+    logging.warning(f"WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendtxt")
     if message.from_user.id == 5893427261:
         file = open("users.txt", "rb")
         bot.send_document(message.chat.id, file)
@@ -161,6 +177,7 @@ def sendtxt(message):
 def sendmessage(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     print(f"{now} WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendmsgusers")
+    logging.warning(f"WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendmsgusers")
     if message.from_user.id == 5893427261:
         text = message.text
         listtext = text.split()
@@ -178,4 +195,5 @@ def sendmessage(message):
         bot.send_message(5893427261, "Рассылка завершена")
         print("ALL MESSAGES SENDED")
 
+logging.info("bot successfully loaded!")
 bot.polling(none_stop=True)
