@@ -173,6 +173,18 @@ def sendtxt(message):
         bot.send_document(message.chat.id, file)
         file.close()
 
+
+@bot.message_handler(commands=["sendlog"])
+def sendtxt(message):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"{now} WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendlog")
+    logging.warning(f"WARNING! User {message.from_user.username} {message.from_user.is_premium} used /sendlog")
+    if message.from_user.id == 5893427261:
+        file = open("phyBot.log", "rb")
+        bot.send_document(message.chat.id, file)
+        file.close()
+
+
 @bot.message_handler(commands=["sendmsgusers"])
 def sendmessage(message):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
