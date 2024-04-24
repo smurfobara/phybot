@@ -86,6 +86,28 @@ def finding(message):
                     bot.send_message(message.chat.id, line)
                     print("finded!")
                     break
+
+
+@bot.message_handler(commands=["shpora"])
+def shpora(message):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    print(f"{now} User {message.from_user.username} {message.from_user.is_premium} used /shpora")
+    logging.info(f"User {message.from_user.username} {message.from_user.is_premium} used /shpora")
+    text = str(message.text)
+    text = text.lower()
+    lines = text.split()
+    del lines[0]
+    if len(lines) != 1:
+        bot.send_message(message.chat.id, "Неправильно указаны аргументы!")
+    else:
+        idshpor = lines[0]
+        print(idshpor)
+        if idshpor in textes.ids:
+            idshporReady = int(idshpor) - 1
+            bot.send_message(message.chat.id, textes.idsshopr[idshporReady])
+        else: 
+            bot.send_message(message.chat.id, "Не найдено такой шпаргалки!")
+
         
 
 
